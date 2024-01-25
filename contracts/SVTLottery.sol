@@ -26,15 +26,14 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
 
     // Airdrop Threshhold
     uint32 public totalAirdropSent = 0;
-    uint32 public totalAirdrop = 10000;
+    uint32 public totalAirdrop = 2500;
 
     // Reward Token variables
-    uint16 public SLTRewardAmountTen = 1;
-    uint16 public SLTRewardAmountHundred = 10;
-    uint16 public SLTRewardAmountThousand = 25;
-    uint16 public SLTRewardAmountTenThousand = 250;
+    uint16 public SLTRewardAmountSeven = 10;
+    uint16 public SLTRewardAmountSeventy = 25;
+    uint16 public SLTRewardAmountSevenHundred = 250;
     uint16 public SLTRedemptionFee = 5;
-    uint16 public SLTAirdropAmount = 5;
+    uint16 public SLTAirdropAmount = 50;
     uint16 public SLTPricePerRedemption = 1;
 
     // Conversion Prices
@@ -44,30 +43,26 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     uint8 private hundredPercent = 100;
 
     // Prices for each category
-    uint16 public entryPriceForWorthHundred = 4;
-    uint16 public entryPriceForWorthThousand = 7;
-    uint16 public entryPriceForWorthTenThousand = 20;
+    uint16 public entryPriceForWorthSeven = 4;
+    uint16 public entryPriceForWorthSeventy = 7;
+    uint16 public entryPriceForWorthSevenHundred = 20;
 
     // Potential Prize Amounts
-    uint16 public WorthTenPotential = 10;
-    uint16 public WorthHundredPotential = 100;
-    uint16 public WorthThousandPotential = 1000;
-    uint16 public WorthTenThousandPotential = 10000;
-
-    // Link Token fee
-    uint16 public linkTokenFee = 2;
+    uint16 public WorthSevenPotential = 7;
+    uint16 public WorthSeventyPotential = 70;
+    uint16 public WorthSevenHundredPotential = 700;
 
     // Zero Value
     uint8 private zeroValue = 0;
 
     // Arrays for prizes
-    uint256[] private worthHundred = [
+    uint256[] private worthSeven = [
         1, 1, 3, 1, 2, 1, 1, 7, 1, 4
     ];
-    uint256[] private worthThousand = [
+    uint256[] private worthSeventy = [
         1, 2, 3, 1, 2, 3, 3, 1, 1, 1, 1, 2, 3, 1, 4, 2, 2, 3, 1, 6, 1, 70, 1, 1, 1, 2, 3, 1, 2, 3
     ];
-    uint256[] private worthTenThousand = [
+    uint256[] private worthSevenHundred = [
         1, 1, 12, 1, 2, 3, 10, 7, 3, 4, 2, 1, 1, 11, 1, 1, 2, 3, 5, 2, 15, 1, 1, 5, 4, 2, 1, 1, 1, 7, 7, 1, 1, 1, 1, 1, 700, 1, 1, 12
     ];
 
@@ -75,14 +70,13 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     address public SLTAddress;
 
     // address WRAPPER - hardcoded for Sepolia
-    address public wrapperAddress = 0xab18414CD93297B0d12ac29E63Ca20f515b3DB46; // 0x5A861794B927983406fCE1D062e00b9368d97Df6
+    address private wrapperAddress = 0xab18414CD93297B0d12ac29E63Ca20f515b3DB46; // 0x5A861794B927983406fCE1D062e00b9368d97Df6
 
     // Link Token Address - hardcoded for Sepolia
-    address public linkTokenAddress = 0x779877A7B0D9E8603169DdbD7836e478b4624789; // 0x514910771AF9Ca656af840dff83E8264EcF986CA
+    address private linkTokenAddress = 0x779877A7B0D9E8603169DdbD7836e478b4624789; // 0x514910771AF9Ca656af840dff83E8264EcF986CA
 
-    //address public priceFeedMainnet = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419;
-    address public priceFeedSepolia = 0x694AA1769357215DE4FAC081bf1f309aDC325306;
-    //address public priceFeedGeorli = 0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e;
+    //address public priceFeedMainnet = 0x2c1d072e956AFFC0D435Cb7AC38EF18d24d9127c;
+    address private priceFeedSepolia = 0xc59E3633BAAC79493d908e63626716e204A45EdF;
 
     // Contributors List
     address[] public contributors;
@@ -96,14 +90,8 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     // Mapping for Address to Participation Status
     mapping (address => bool) private addressToParticipationStatus;
 
-    // Mapping for Address to Requested Random Number Function
-    mapping (address => bool) private addressToRandomnessCheck;
-
     // Mapping for Address to Airdrop claimed
-    mapping (address => bool) addressToAidropClaimed;
-
-    // <appimg for Link Token Fee Check
-    mapping (address => bool) private addressToLinkTokenFeePaid;
+    mapping (address => bool) public addressToAidropClaimed;
 
     // Mapping for address to Request ID
     mapping (address => uint256) public addressToRequestId;
@@ -128,8 +116,6 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     event Contribution(address indexed contributor, uint256 linkTokenAmount, uint256 totalContributions, string reason);
     event StatusUpdate(address indexed participant, uint256 Amount, string reason);
     event LinkTokensReceived(address indexed sender, uint256 linkTokenAmount, uint256 totalLinkTokensInContract, string reason);
-    event RequestSent(uint256 requestId, uint32 numWords);
-    event RequestFulfilled(uint256 requestId, uint256[] randomWords, uint256 payment);
 
     // Modifier: Prevents reentrancy attacks
     modifier nonReentrant() {
@@ -137,13 +123,6 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
         addressAccessLocked[msg.sender] = true;
         _;
         addressAccessLocked[msg.sender] = false;
-    }
-
-    // Modifier: Require entry amount to be equal to or greater than entry price
-    modifier entryPriceCheck(uint256 _amountSent, uint256 _amountRequired) {
-        uint256 ethAmountRequired = convertDollarToEth(_amountRequired);
-        require(_amountSent >= ethAmountRequired, "Amount Paid is less than Entry price");
-        _;
     }
 
     // Modifier: Require entry amount to be equal to or greater than entry price
@@ -166,14 +145,14 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
 
     // Modifier: Require sender to have allowed contract to be able to spend Link tokens
     modifier totalAirdropSentCheck() {
-        require(totalAirdropSent < totalAirdrop, "Airdrop No Longer Possible");
+        require(totalAirdropSent < totalAirdrop, "Airdrop Not Available Currently");
         _;
         totalAirdropSent += SLTAirdropAmount;
     }
 
     // Modifier: Check if withdrawal is possible
     modifier withdrawalPossible() {
-        require(address(this).balance > addressToTotalFundsAtTimeOfContribution[msg.sender], "You are not eligible to withdraw");
+        require(link.balanceOf(address(this)) > addressToTotalFundsAtTimeOfContribution[msg.sender], "You are not eligible to withdraw");
         _;
     }
 
@@ -202,13 +181,6 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
         _;
     }
 
-    // Modifier: Check if Link Token Fee has been paid
-    modifier linkTokenFeePaid() {
-        require(addressToLinkTokenFeePaid[msg.sender] == true, "Link token fee not paid");
-        _;
-        addressToLinkTokenFeePaid[msg.sender] = false;
-    }
-
     // Modifier: Range check for contributors list index
     modifier participationCheck() {
         require(addressToParticipationStatus[msg.sender] == true, "Not a participant. Choose a draw");
@@ -219,15 +191,8 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     // Modifier: Require random number to be available
     modifier randomNumberAvailable() {
         uint256 _requestId = addressToRequestId[msg.sender];
-        require(s_requests[_requestId].fulfilled == true, "request not found");
+        require(s_requests[_requestId].fulfilled == true, "Random Number not yet Generated");
         _;
-    }
-
-    // Modifier: Range check for contributors list index
-    modifier randomNumberRequestedCheck() {
-        require(addressToRandomnessCheck[msg.sender] == false, "You have already requested for a Random Number");
-        _;
-        addressToRandomnessCheck[msg.sender] = true;
     }
 
     // Modifier: Check amount of Link tokens in contract
@@ -248,36 +213,36 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     {}
 
     // Function: Get the current ETH price from the Chainlink price feed
-    function checkEthPrice()
+    function checkLinkPrice()
         internal
         view
         returns(uint256)
     {
         (,int256 price,,,) = priceFeed.latestRoundData();
-        uint256 ethPrice = uint256(price) * tenTen;
-        return ethPrice;
+        uint256 LinkPrice = uint256(price) * tenTen;
+        return LinkPrice;
     }
 
     // Function: Convert ETH to dollar equivalent
-    function convertEthToDollar(uint256 _ethAmountInWei)
-        internal 
-        view 
-        returns(uint256)
-    {
-        uint256 currentEthPrice = checkEthPrice();
-        uint256 dollarEquivalent = (_ethAmountInWei * currentEthPrice) / tenEighteen;
-        return dollarEquivalent;
-    }
+    // function convertLinkToDollar(uint256 _LinkAmountInWei)
+    //     internal 
+    //     view 
+    //     returns(uint256)
+    // {
+    //     uint256 currentEthPrice = checkLinkPrice();
+    //     uint256 dollarEquivalent = (_LinkAmountInWei * currentEthPrice) / tenEighteen;
+    //     return dollarEquivalent;
+    // }
 
     // Function: Convert dollar to ETH equivalent
-    function convertDollarToEth(uint256 dollarAmount)
+    function convertDollarToLink(uint256 dollarAmount)
         internal
         view
         returns(uint256) 
     {
-        uint256 currentEthPrice = checkEthPrice();
-        uint256 ethEquivalent = ((dollarAmount * tenEighteen) / (currentEthPrice / tenTen)) * tenEight;
-        return ethEquivalent;
+        uint256 currentLinkPrice = checkLinkPrice();
+        uint256 LinkEquivalent = ((dollarAmount * tenEighteen) / (currentLinkPrice / tenTen)) * tenEight;
+        return LinkEquivalent;
     }
 
     // Function: Allow contributors to contribute ETH to the smart contract
@@ -342,7 +307,7 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
             addressToTotalFundsAtTimeOfContribution[senderAddress] = zeroValue;
         }
         link.transfer(msg.sender, contributionLinkTokenAmountAfterCharge);
-        emit StatusUpdate(senderAddress, contributionLinkTokenAmountAfterCharge, "Withdrawing ETH contributed from Smart Contract Total Funds.");
+        emit StatusUpdate(senderAddress, contributionLinkTokenAmountAfterCharge, "Withdrawing Link contributed from Smart Contract Total Funds.");
     }
 
     //Function: Set the percentage to be charged by the contract upon withdrawal
@@ -354,95 +319,72 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     }
 
     //Function: Set the price for worth Ten
-    function updatePriceForHundred(uint16 _newPrice)
+    function updateEntryPriceForSeven(uint16 _newPrice)
         external
         onlyOwner
     {
-        entryPriceForWorthHundred = _newPrice;
+        entryPriceForWorthSeven = _newPrice;
     }
 
     //Function: Set the price for worth Ten
-    function updatePriceForThousand(uint16 _newPrice)
+    function updateEntryPriceForSeventy(uint16 _newPrice)
         external
         onlyOwner
     {
-        entryPriceForWorthThousand = _newPrice;
+        entryPriceForWorthSeventy = _newPrice;
     }
 
     //Function: Set the price for worth Ten
-    function updatePriceForTenThousand(uint16 _newPrice)
+    function updateEntryPriceForSevenHundred(uint16 _newPrice)
         external
         onlyOwner
     {
-        entryPriceForWorthTenThousand = _newPrice;
+        entryPriceForWorthSevenHundred = _newPrice;
     }
 
-    // Function: Participate to win potentially $10
-    function playLotteryWorthHundred()
+    // Function: Participate to win potentially 7 Link
+    function playLotteryWorthSeven()
         external
-        entryPriceCheck(msg.value, entryPriceForWorthHundred) 
-        addressLinkBalanceCheck(entryPriceForWorthHundred)
-        transferAllowedLink(entryPriceForWorthHundred * tenEighteen)
+        addressLinkBalanceCheck(entryPriceForWorthSeven)
+        transferAllowedLink(entryPriceForWorthSeven * tenEighteen)
     {
         address senderAddress = msg.sender;
-        link.transferFrom(senderAddress, address(this), entryPriceForWorthHundred * tenEighteen);
-        rewardSLT(senderAddress, SLTRewardAmountHundred);
+        link.transferFrom(senderAddress, address(this), entryPriceForWorthSeven * tenEighteen);
+        rewardSLT(senderAddress, SLTRewardAmountSeven);
         addressToParticipationStatus[senderAddress] = true;
-        addressToRandomnessCheck[senderAddress] = false;
         addressToRequestId[senderAddress] = requestRandomWords();
-        addressToDraw[senderAddress] = WorthHundredPotential;
-        emit StatusUpdate(senderAddress, msg.value, "Paid to Participate in Draw Worth Hundred");
+        addressToDraw[senderAddress] = WorthSevenPotential;
+        emit StatusUpdate(senderAddress, entryPriceForWorthSeven, "Paid to Participate in Draw Worth Hundred");
     }
 
-    // Function: Participate to win potentially $10
-    function playLotteryWorthThousand()
+    // Function: Participate to win potentially 70 Link
+    function playLotteryWorthSeventy()
         external
-        entryPriceCheck(msg.value, entryPriceForWorthThousand) 
-        addressLinkBalanceCheck(entryPriceForWorthThousand)
-        transferAllowedLink(entryPriceForWorthThousand * tenEighteen)
+        addressLinkBalanceCheck(entryPriceForWorthSeventy)
+        transferAllowedLink(entryPriceForWorthSeventy * tenEighteen)
     {
         address senderAddress = msg.sender;
-        link.transferFrom(senderAddress, address(this), entryPriceForWorthThousand * tenEighteen);
-        rewardSLT(senderAddress, SLTRewardAmountThousand);
+        link.transferFrom(senderAddress, address(this), entryPriceForWorthSeventy * tenEighteen);
+        rewardSLT(senderAddress, SLTRewardAmountSeventy);
         addressToParticipationStatus[senderAddress] = true;
-        addressToRandomnessCheck[senderAddress] = false;
         addressToRequestId[senderAddress] = requestRandomWords();
-        addressToDraw[senderAddress] = WorthThousandPotential;
-        emit StatusUpdate(senderAddress, msg.value, "Paid to Participate in Draw Worth Thousand");
+        addressToDraw[senderAddress] = WorthSeventyPotential;
+        emit StatusUpdate(senderAddress, entryPriceForWorthSeventy, "Paid to Participate in Draw Worth Thousand");
     }
 
-    // Function: Participate to win potentially $10
-    function playLotteryWorthTenThousand()
+    // Function: Participate to win potentially 700 Link
+    function playLotteryWorthSevenHundred()
         external
-        entryPriceCheck(msg.value, entryPriceForWorthTenThousand)
-        addressLinkBalanceCheck(entryPriceForWorthTenThousand)
-        transferAllowedLink(entryPriceForWorthTenThousand * tenEighteen)
+        addressLinkBalanceCheck(entryPriceForWorthSevenHundred)
+        transferAllowedLink(entryPriceForWorthSevenHundred * tenEighteen)
     {
         address senderAddress = msg.sender;
-        link.transferFrom(senderAddress, address(this), entryPriceForWorthTenThousand * tenEighteen);
-        rewardSLT(senderAddress, SLTRewardAmountTenThousand);
+        link.transferFrom(senderAddress, address(this), entryPriceForWorthSevenHundred * tenEighteen);
+        rewardSLT(senderAddress, SLTRewardAmountSevenHundred);
         addressToParticipationStatus[senderAddress] = true;
-        addressToRandomnessCheck[senderAddress] = false;
         addressToRequestId[senderAddress] = requestRandomWords();
-        addressToDraw[senderAddress] = WorthTenThousandPotential;
-        emit StatusUpdate(senderAddress, msg.value, "Paid to Participate in Draw Worth TenThousand");
-    }
-
-    // Function: Receive Link Tokens
-    function payLinkTokenFee()
-        external
-        transferAllowedLink(linkTokenFee * tenEighteen)
-    {
-        link.transferFrom(msg.sender, address(this), linkTokenFee * tenEighteen);
-        addressToLinkTokenFeePaid[msg.sender] = true;
-    }
-
-    //Function: Set Link token fee
-    function updateLinkTokenFee(uint16 _amountOfLink)
-        external
-        onlyOwner
-    {
-        linkTokenFee = _amountOfLink;
+        addressToDraw[senderAddress] = WorthSevenHundredPotential;
+        emit StatusUpdate(senderAddress, entryPriceForWorthSevenHundred, "Paid to Participate in Draw Worth TenThousand");
     }
 
     // Function: Withdraw excess Link Tokens in Contract
@@ -457,7 +399,6 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     // Function: Get random number
     function requestRandomWords()
         private
-        randomNumberRequestedCheck
         returns(uint256 requestId)
     {
         requestId = requestRandomness(callbackGasLimit, requestConfirmations, numWords);
@@ -485,30 +426,25 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
         participationCheck
         randomNumberAvailable
     {
-        uint256 amountToRedeem = zeroValue;
-        uint256 ethAmountToSend = zeroValue;
+        uint256 LinkAmountToSend = zeroValue;
         uint256 randomNumber = zeroValue;
         address senderAddress = msg.sender;
         uint256 requestId = addressToRequestId[senderAddress];
         uint256 realRandomNumber = getRandomNumber(requestId);
         uint256 drawAmount = addressToDraw[senderAddress];
-        if(drawAmount == WorthHundredPotential){
-            randomNumber = realRandomNumber % worthHundred.length;
-            amountToRedeem = worthHundred[randomNumber];
-            ethAmountToSend = convertDollarToEth(amountToRedeem);
-        } else if(drawAmount == WorthThousandPotential){
-            randomNumber = realRandomNumber % worthThousand.length;
-            amountToRedeem = worthThousand[randomNumber];
-            ethAmountToSend = convertDollarToEth(amountToRedeem);
-        } else if(drawAmount == WorthTenThousandPotential){
-            randomNumber = realRandomNumber % worthTenThousand.length;
-            amountToRedeem = worthTenThousand[randomNumber];
-            ethAmountToSend = convertDollarToEth(amountToRedeem);
+        if(drawAmount == WorthSevenPotential){
+            randomNumber = realRandomNumber % worthSeven.length;
+            LinkAmountToSend = worthSeven[randomNumber];
+        } else if(drawAmount == WorthSeventyPotential){
+            randomNumber = realRandomNumber % worthSeventy.length;
+            LinkAmountToSend = worthSeventy[randomNumber];
+        } else if(drawAmount == WorthSevenHundredPotential){
+            randomNumber = realRandomNumber % worthSevenHundred.length;
+            LinkAmountToSend = worthSevenHundred[randomNumber];
         }
-        payable(senderAddress).transfer(ethAmountToSend);
+        link.transfer(senderAddress, LinkAmountToSend * tenEighteen);
         addressToDraw[senderAddress] = zeroValue;
-        addressToRandomnessCheck[senderAddress] = false;
-        emit StatusUpdate(senderAddress, amountToRedeem, "Dollar Amount Won From Participation");
+        emit StatusUpdate(senderAddress, LinkAmountToSend, "Link Token Amount Won From Participation");
     }
 
 
@@ -547,8 +483,8 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     {
         address senderAddress = msg.sender;
         SLT.transferFrom(senderAddress, address(this), _SLTRedemptionAmount * tenEighteen);
-        uint256 ethAmountToSend = convertDollarToEth((((_SLTRedemptionAmount * tenEight) / SLTRedemptionFee) * SLTPricePerRedemption) / tenEight);
-        payable(senderAddress).transfer(ethAmountToSend);
+        uint256 LinkAmountToSend = convertDollarToLink((((_SLTRedemptionAmount * tenEight) / SLTRedemptionFee) * SLTPricePerRedemption) / tenEight);
+        link.transfer(senderAddress, LinkAmountToSend);
     }
     
     // Function: Set Reward Token Address
@@ -575,13 +511,13 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     {
         SLTRedemptionFee = _SLTRedemptionFee;
     }
-
-    // Function: Update Reward Token Amount
-    function updateSLTRewardTenAmount(uint16 _SLTRewardAmount)
+    
+    // Function: Update reward token redemption price
+    function updateSLTAirdropLimit(uint16 _SLTAirdropLimit)
         external
         onlyOwner
     {
-        SLTRewardAmountTen = _SLTRewardAmount;
+        totalAirdrop = _SLTAirdropLimit;
     }
 
     // Function: Update Reward Token Amount
@@ -589,7 +525,7 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
         external
         onlyOwner
     {
-        SLTRewardAmountHundred = _SLTRewardAmount;
+        SLTRewardAmountSeven = _SLTRewardAmount;
     }
 
     // Function: Update Reward Token Amount
@@ -597,7 +533,7 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
         external
         onlyOwner
     {
-        SLTRewardAmountThousand = _SLTRewardAmount;
+        SLTRewardAmountSeventy = _SLTRewardAmount;
     }
 
     // Function: Update Reward Token Amount
@@ -605,7 +541,7 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
         external
         onlyOwner
     {
-        SLTRewardAmountTenThousand = _SLTRewardAmount;
+        SLTRewardAmountSevenHundred = _SLTRewardAmount;
     }
 
     // Function: Update Airdrop Token Amount
