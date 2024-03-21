@@ -3,25 +3,21 @@
 pragma solidity ^0.8.23;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {VRFCoordinatorV2Interface} from "@chainlink/contracts@0.8.0/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import {VRFConsumerBaseV2} from "@chainlink/contracts@0.8.0/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 import {ConfirmedOwner} from "@chainlink/contracts@0.8.0/src/v0.8/shared/access/ConfirmedOwner.sol";
+import {VRFV2WrapperConsumerBase} from "@chainlink/contracts@0.8.0/src/v0.8/vrf/VRFV2WrapperConsumerBase.sol";
+import {LinkTokenInterface} from "@chainlink/contracts@0.8.0/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
 
-contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
+contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
 
     struct RequestStatus {
+        uint256 paid;
         bool fulfilled;
-        bool exists;
         uint256[] randomWords;
     }
-    VRFCoordinatorV2Interface COORDINATOR;
 
     uint32 private callbackGasLimit = 100000;
     uint8 private requestConfirmations = 3;
     uint8 private numWords = 1;
-    uint64 private s_subscriptionId = 181;
-    bytes32 keyHash = 0x72d2b016bb5b62912afea355ebf33b91319f828738b111b723b78696b9847b63;
-    address Coordinator = 0x41034678D6C633D8a95c75e1138A360a28bA15d1;
 
     uint8 public percentageCharge = 25;
 
@@ -36,13 +32,19 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
     uint8 private hundredPercent = 100;
 
     uint8 private zeroValue = 0;
+    uint private getWithdrawalAmountPaidvalue = 0;
+    uint private getFinalResultValuePaidvalue = 0;
 
     bool[] private potentialToWin = [
         false, false, false, false, false, false, false, true, false, false, false, false, false, false, false
     ];
     uint256 private prizeMultipler = 10;
 
-    address public SLTAddress = 0x42B5bcE9095aeC6E605991cA6dE23330C43b124D;
+    address public SLTAddress = 0x478891865B5c168263927822dfed56de3f936CA0;
+
+    address linkAddress = 0xb1D4538B4571d411F07960EF2838Ce337FE1E80E;
+
+    address wrapperAddress = 0x1D3bb92db7659F2062438791F131CFA396dfb592;
 
     address[] public contributors;
 
@@ -119,14 +121,20 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
         _;
     }
 
+    event FinalResult(uint256 SLTAmountWon);
+    event Withdrawal(uint256 SLTAmountAvailable);
+    event Contribution(uint256 SLTAmountContributed);
+    event PlayLottery(uint256 SLTAmountStakedInLottery);
+    event Airdrop(uint256 SLTAirdropAmount);
+    event NewPrizeMultipler(uint256 prizeMultipler);
+    event NewAirdropAmount(uint256 airdropAmount);
+    event NewAirdropLimit(uint256 airdropLimit);
+    event NewWithdrawalPercentage(uint256 withdrawalPercentage);
+
     constructor()
-    ConfirmedOwner(msg.sender)
-    VRFConsumerBaseV2(Coordinator) 
-    {
-        COORDINATOR = VRFCoordinatorV2Interface(
-            Coordinator
-        );
-    }
+        ConfirmedOwner(msg.sender)
+        VRFV2WrapperConsumerBase(linkAddress, wrapperAddress)
+    {}
 
     function contribute(uint256 _SLTTokenAmount)
         external 
@@ -138,11 +146,11 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
         addressToTotalFundsAtTimeOfContribution[msg.sender] = SLT.balanceOf(address(this)) - _SLTTokenAmount;
         addressToAmountContributed[msg.sender] = _SLTTokenAmount;
         contributors.push(msg.sender);
+        emit Contribution(_SLTTokenAmount);
     }
 
     function getWithdrawalAmount()
         public
-        view
         contributorExists
         withdrawalPossible
         returns(uint256 contributionSLTTokenAmountAfterCharge, uint256 indexOfContributor)
@@ -175,6 +183,7 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
             contributionCharge = 0;
         }
         contributionSLTTokenAmountAfterCharge = amountToWithdraw - contributionCharge;
+        emit Withdrawal(contributionSLTTokenAmountAfterCharge);
         return (contributionSLTTokenAmountAfterCharge, indexOfContributor);
     }
 
@@ -197,6 +206,7 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
         onlyOwner
     {
         percentageCharge = _percentage;
+        emit NewWithdrawalPercentage(_percentage);
     }
 
     function playLottery(uint256 _sltAmountToStake)
@@ -208,22 +218,21 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
         addressToParticipationStatus[msg.sender] = true;
         addressToRequestId[msg.sender] = requestRandomWords();
         addressToLotteryStake[msg.sender] = _sltAmountToStake;
+        emit PlayLottery(_sltAmountToStake);
     }
 
     function requestRandomWords()
         internal
         returns (uint256 requestId)
     {
-        requestId = COORDINATOR.requestRandomWords(
-            keyHash,
-            s_subscriptionId,
-            requestConfirmations,
+        requestId = requestRandomness(
             callbackGasLimit,
+            requestConfirmations,
             numWords
         );
         s_requests[requestId] = RequestStatus({
+            paid: VRF_V2_WRAPPER.calculateRequestPrice(callbackGasLimit),
             randomWords: new uint256[](0),
-            exists: true,
             fulfilled: false
         });
         return requestId;
@@ -233,30 +242,29 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
         internal
         override
     {
-        require(s_requests[_requestId].exists, "request not found");
+        require(s_requests[_requestId].paid > 0, "request not found");
         s_requests[_requestId].fulfilled = true;
         s_requests[_requestId].randomWords = _randomWords;
     }
 
     function getFinalResultValue()
         public
-        view
         participationCheck
         randomNumberAvailable
         returns(uint256 SLTAmountWon)
     {
         uint256 requestId = addressToRequestId[msg.sender];
         uint256 realRandomNumber = getRandomNumber(requestId);
-        uint256 SLTAmountToSend = zeroValue;
         uint256 stakeAmount = addressToLotteryStake[msg.sender];
         uint256 randomNumber = realRandomNumber % potentialToWin.length;
         bool status = potentialToWin[randomNumber];
         if(status == false){
-            SLTAmountToSend = 0;
+            SLTAmountWon = 0;
         }else{
-            SLTAmountToSend = stakeAmount * prizeMultipler;
+            SLTAmountWon = stakeAmount * prizeMultipler;
         }
-        return SLTAmountToSend;
+        emit FinalResult(SLTAmountWon);
+        return SLTAmountWon;
     }
 
     function getFinalResult()
@@ -283,6 +291,7 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
         totalAirdropSentCheck
     {
         SLT.transfer(msg.sender, SLTAirdropAmount * tenEighteen);
+        emit Airdrop(SLTAirdropAmount);
     }
     
     function updateSLTAirdropLimit(uint16 _SLTAirdropLimit)
@@ -290,6 +299,7 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
         onlyOwner
     {
         totalAirdrop = _SLTAirdropLimit;
+        emit NewAirdropLimit(_SLTAirdropLimit);
     }
 
     function updateSLTAirdropAmount(uint16 _newTokenAmount)
@@ -297,6 +307,7 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
         onlyOwner
     {
         SLTAirdropAmount = _newTokenAmount;
+        emit NewAirdropAmount(_newTokenAmount);
     }
     
     function updatePrizeMultipler(uint16 _prizeMultipler)
@@ -304,5 +315,17 @@ contract SVTLottery is VRFConsumerBaseV2, ConfirmedOwner {
         onlyOwner
     {
         prizeMultipler = _prizeMultipler;
+        emit NewPrizeMultipler(_prizeMultipler);
+    }
+
+    function withdrawLink() 
+    public 
+    onlyOwner 
+    {
+        LinkTokenInterface link = LinkTokenInterface(linkAddress);
+        require(
+            link.transfer(msg.sender, link.balanceOf(address(this))),
+            "Unable to transfer"
+        );
     }
 }
