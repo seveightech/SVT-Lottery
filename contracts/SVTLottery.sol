@@ -40,11 +40,11 @@ contract SVTLottery is VRFV2WrapperConsumerBase, ConfirmedOwner {
     ];
     uint256 private prizeMultipler = 10;
 
-    address public SLTAddress = 0x478891865B5c168263927822dfed56de3f936CA0;
+    address public SLTAddress = 0x42B5bcE9095aeC6E605991cA6dE23330C43b124D;
 
-    address linkAddress = 0xb1D4538B4571d411F07960EF2838Ce337FE1E80E;
+    address linkAddress = 0xf97f4df75117a78c1A5a0DBb814Af92458539FB4;
 
-    address wrapperAddress = 0x1D3bb92db7659F2062438791F131CFA396dfb592;
+    address wrapperAddress = 0x2D159AE3bFf04a10A355B608D22BDEC092e934fa;
 
     address[] public contributors;
 
