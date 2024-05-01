@@ -7,11 +7,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
 contract SVTLotteryToken is ERC20, Ownable, ERC20Permit {
-    constructor(address initialOwner)
+    constructor()
         ERC20("SVTLotteryToken", "SLT")
-        Ownable(initialOwner)
+        Ownable(msg.sender)
         ERC20Permit("SVTLotteryToken")
     {
-        _mint(initialOwner, 1000000 * 10**18);
+        _mint(msg.sender, 1000000 * 10**18);
     }
 }

@@ -11,66 +11,20 @@
 				"type": "constructor"
 			},
 			{
-				"anonymous": false,
 				"inputs": [
 					{
-						"indexed": true,
 						"internalType": "address",
-						"name": "contributor",
+						"name": "have",
 						"type": "address"
 					},
 					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "ethAmount",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "totalContributions",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "reason",
-						"type": "string"
-					}
-				],
-				"name": "Contribution",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
 						"internalType": "address",
-						"name": "sender",
+						"name": "want",
 						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "linkTokenAmount",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "totalLinkTokensInContract",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "reason",
-						"type": "string"
 					}
 				],
-				"name": "LinkTokensReceived",
-				"type": "event"
+				"name": "OnlyCoordinatorCanFulfill",
+				"type": "error"
 			},
 			{
 				"anonymous": false,
@@ -111,144 +65,6 @@
 				"type": "event"
 			},
 			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "address",
-						"name": "participant",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "ethAmount",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "reason",
-						"type": "string"
-					}
-				],
-				"name": "Participation",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "address",
-						"name": "participant",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "ethAmount",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "reason",
-						"type": "string"
-					}
-				],
-				"name": "ParticipationResult",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "requestId",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256[]",
-						"name": "randomWords",
-						"type": "uint256[]"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "payment",
-						"type": "uint256"
-					}
-				],
-				"name": "RequestFulfilled",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "requestId",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint32",
-						"name": "numWords",
-						"type": "uint32"
-					}
-				],
-				"name": "RequestSent",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "address",
-						"name": "sender",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "reason",
-						"type": "string"
-					}
-				],
-				"name": "StatusUpdate",
-				"type": "event"
-			},
-			{
-				"anonymous": false,
-				"inputs": [
-					{
-						"indexed": true,
-						"internalType": "address",
-						"name": "contributor",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "ethAmount",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "reason",
-						"type": "string"
-					}
-				],
-				"name": "Withdrawal",
-				"type": "event"
-			},
-			{
 				"inputs": [],
 				"name": "SLTAddress",
 				"outputs": [
@@ -276,136 +92,6 @@
 			},
 			{
 				"inputs": [],
-				"name": "SLTPricePerRedemption",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "SLTRedemptionFee",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "SLTRewardAmountHundred",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "SLTRewardAmountTen",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "SLTRewardAmountTenThousand",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "SLTRewardAmountThousand",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "WorthHundredPotential",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "WorthTenPotential",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "WorthTenThousandPotential",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "WorthThousandPotential",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
 				"name": "acceptOwnership",
 				"outputs": [],
 				"stateMutability": "nonpayable",
@@ -419,7 +105,45 @@
 						"type": "address"
 					}
 				],
+				"name": "addressToAidropClaimed",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
 				"name": "addressToAmountContributed",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "addressToRequestId",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -450,72 +174,39 @@
 				"type": "function"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_recipientAddress",
-						"type": "address"
-					}
-				],
-				"name": "airdropSLT",
+				"inputs": [],
+				"name": "claimAirdropSLT",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_SLTTokenAmount",
+						"type": "uint256"
+					}
+				],
 				"name": "contribute",
 				"outputs": [],
-				"stateMutability": "payable",
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "entryPriceForWorthHundred",
-				"outputs": [
+				"inputs": [
 					{
-						"internalType": "uint16",
+						"internalType": "uint256",
 						"name": "",
-						"type": "uint16"
+						"type": "uint256"
 					}
 				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "entryPriceForWorthTen",
+				"name": "contributors",
 				"outputs": [
 					{
-						"internalType": "uint16",
+						"internalType": "address",
 						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "entryPriceForWorthTenThousand",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "entryPriceForWorthThousand",
-				"outputs": [
-					{
-						"internalType": "uint16",
-						"name": "",
-						"type": "uint16"
+						"type": "address"
 					}
 				],
 				"stateMutability": "view",
@@ -530,12 +221,49 @@
 			},
 			{
 				"inputs": [],
-				"name": "linkTokenFee",
+				"name": "getFinalResultValue",
 				"outputs": [
 					{
-						"internalType": "uint16",
+						"internalType": "uint256",
+						"name": "SLTAmountWon",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "getRandomNumber",
+				"outputs": [
+					{
+						"internalType": "uint256",
 						"name": "",
-						"type": "uint16"
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getWithdrawalAmount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "contributionSLTTokenAmountAfterCharge",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "indexOfContributor",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -568,43 +296,28 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "playLotteryWorthHundred",
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_sltAmountToStake",
+						"type": "uint256"
+					}
+				],
+				"name": "playLottery",
 				"outputs": [],
-				"stateMutability": "payable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "playLotteryWorthTen",
-				"outputs": [],
-				"stateMutability": "payable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "playLotteryWorthTenThousand",
-				"outputs": [],
-				"stateMutability": "payable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "playLotteryWorthThousand",
-				"outputs": [],
-				"stateMutability": "payable",
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
 				"inputs": [
 					{
 						"internalType": "uint256",
-						"name": "_requestId",
+						"name": "requestId",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256[]",
-						"name": "_randomWords",
+						"name": "randomWords",
 						"type": "uint256[]"
 					}
 				],
@@ -614,23 +327,53 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "receiveLinkTokens",
-				"outputs": [],
-				"stateMutability": "nonpayable",
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "s_requests",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "fulfilled",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "exists",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
-				"inputs": [
+				"inputs": [],
+				"name": "totalAirdrop",
+				"outputs": [
 					{
-						"internalType": "uint16",
-						"name": "_SLTRedemptionAmount",
-						"type": "uint16"
+						"internalType": "uint32",
+						"name": "",
+						"type": "uint32"
 					}
 				],
-				"name": "redeemSLT",
-				"outputs": [],
-				"stateMutability": "nonpayable",
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalAirdropSent",
+				"outputs": [
+					{
+						"internalType": "uint32",
+						"name": "",
+						"type": "uint32"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -642,19 +385,6 @@
 					}
 				],
 				"name": "transferOwnership",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint16",
-						"name": "_amountOfLink",
-						"type": "uint16"
-					}
-				],
-				"name": "updateLinkTokenFee",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -676,63 +406,11 @@
 				"inputs": [
 					{
 						"internalType": "uint16",
-						"name": "_newPrice",
+						"name": "_prizeMultipler",
 						"type": "uint16"
 					}
 				],
-				"name": "updatePriceForHundred",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint16",
-						"name": "_newPrice",
-						"type": "uint16"
-					}
-				],
-				"name": "updatePriceForTen",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint16",
-						"name": "_newPrice",
-						"type": "uint16"
-					}
-				],
-				"name": "updatePriceForTenThousand",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint16",
-						"name": "_newPrice",
-						"type": "uint16"
-					}
-				],
-				"name": "updatePriceForThousand",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_SLTAddress",
-						"type": "address"
-					}
-				],
-				"name": "updateSLTAddress",
+				"name": "updatePrizeMultipler",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -754,76 +432,11 @@
 				"inputs": [
 					{
 						"internalType": "uint16",
-						"name": "_SLTPricePerRedemption",
+						"name": "_SLTAirdropLimit",
 						"type": "uint16"
 					}
 				],
-				"name": "updateSLTPricePerRedemption",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint16",
-						"name": "_SLTRedemptionFee",
-						"type": "uint16"
-					}
-				],
-				"name": "updateSLTRedemptionFee",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint16",
-						"name": "_SLTRewardAmount",
-						"type": "uint16"
-					}
-				],
-				"name": "updateSLTRewardHundredAmount",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint16",
-						"name": "_SLTRewardAmount",
-						"type": "uint16"
-					}
-				],
-				"name": "updateSLTRewardTenAmount",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint16",
-						"name": "_SLTRewardAmount",
-						"type": "uint16"
-					}
-				],
-				"name": "updateSLTRewardTenThousandAmount",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint16",
-						"name": "_SLTRewardAmount",
-						"type": "uint16"
-					}
-				],
-				"name": "updateSLTRewardThousandAmount",
+				"name": "updateSLTAirdropLimit",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -831,13 +444,6 @@
 			{
 				"inputs": [],
 				"name": "withdrawContribution",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "withdrawExcessLinkTokens",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -866,7 +472,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/SVTLottery.sol": "SVTLottery"
+			"contracts/SVTLotteryNew.sol": "SVTLottery"
 		},
 		"evmVersion": "shanghai",
 		"libraries": {},
@@ -880,23 +486,15 @@
 		"remappings": []
 	},
 	"sources": {
-		"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol": {
-			"keccak256": "0xfe4e8bb4861bb3860ba890ab91a3b818ec66e5a8f544fb608cfcb73f433472cd",
+		"@chainlink/contracts@0.8.0/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol": {
+			"keccak256": "0xa9f8b7e09811f4ac9f421116b5d6bcf50b5748025c0cb012aaf5ff7c39a6b46a",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://644cff84052e1e82b5bb502b2a46e8f142a62b0db4cd9b38200798ba8373c6f7",
-				"dweb:/ipfs/QmTa99QHrJBn3SXDizquPBUiTxVCNKQrHgaWJhuds5Sce2"
+				"bzz-raw://d66b2096987616cda4611c109d9904863872ca5852d736b30f0e19e49afde35f",
+				"dweb:/ipfs/Qmc6jpm3k3YuJG7U2s3FWr81Vk2rdQBhdqD9sA6b8Cr9BE"
 			]
 		},
-		"@chainlink/contracts/src/v0.8/interfaces/VRFV2WrapperInterface.sol": {
-			"keccak256": "0x44f6fa0cb1867a0bc137a195d4603bafa1cf74ecfbe69eb82a5dabeca8957738",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://87ebb29c09566ab02ff62c3c29f60a08db52f032b5f2c5220cd111aad88002ce",
-				"dweb:/ipfs/QmfScq3oJ6MkPXJh5JUrpz93bNMJ3ebtLcE3Q1H2DUNi93"
-			]
-		},
-		"@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol": {
+		"@chainlink/contracts@0.8.0/src/v0.8/shared/access/ConfirmedOwner.sol": {
 			"keccak256": "0x99d0b0786fe368970009c703f2249bfbc56340ddf1a28b60d2915bb58c34cd72",
 			"license": "MIT",
 			"urls": [
@@ -904,7 +502,7 @@
 				"dweb:/ipfs/QmPnC9qNDKwJFd5unwLb9pxjrutoe8MWjm5EXHTxq2kJ4x"
 			]
 		},
-		"@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwnerWithProposal.sol": {
+		"@chainlink/contracts@0.8.0/src/v0.8/shared/access/ConfirmedOwnerWithProposal.sol": {
 			"keccak256": "0x215529a99534a40e6257ef2282a91ea4a95b66debc3997866406907622efb405",
 			"license": "MIT",
 			"urls": [
@@ -912,7 +510,7 @@
 				"dweb:/ipfs/QmSpW4vkPHeRNZ14beMEk2LEtqY5JQTueNJC4sCT8JaSoc"
 			]
 		},
-		"@chainlink/contracts/src/v0.8/shared/interfaces/IOwnable.sol": {
+		"@chainlink/contracts@0.8.0/src/v0.8/shared/interfaces/IOwnable.sol": {
 			"keccak256": "0x885de72b7b4e4f1bf8ba817a3f2bcc37fd9022d342c4ce76782151c30122d767",
 			"license": "MIT",
 			"urls": [
@@ -920,20 +518,12 @@
 				"dweb:/ipfs/QmNoBX8TY424bdQWyQC7y3kpKfgxyWxhLw7KEhhEEoBN9q"
 			]
 		},
-		"@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol": {
-			"keccak256": "0xac02fbc0c7d194e525a71f524d1f7c472df73e19c2b527d7b529badaeaf0ec51",
+		"@chainlink/contracts@0.8.0/src/v0.8/vrf/VRFConsumerBaseV2.sol": {
+			"keccak256": "0x3d709a5e0f1f9b8841172b10ba8af785dd51a13eda9fc395723a706e51329904",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://301fa881df623882941bdc7a807807df436c5c7da499fa1a4bbe490738109845",
-				"dweb:/ipfs/QmV2W4NYpe6uk4s34sCyrFJHfPEjYAkvHUposWkXrRNtbj"
-			]
-		},
-		"@chainlink/contracts/src/v0.8/vrf/VRFV2WrapperConsumerBase.sol": {
-			"keccak256": "0x892f17652e5de9d5e0b5e9424a9b3f2a69d3e50070ba1387f2292aea8190d3bd",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://4c99ad1fdfa93095ddac209390301dc5cb9da36fb6420b4c0bb7a2c76d6665be",
-				"dweb:/ipfs/QmVajNoVLwDcVh9CFoJvTRQpPjg4CRP1Vco6481sVgY9iB"
+				"bzz-raw://038eef992d813c20737fbe94e3a36e5d541d1aa736158dd2a43dd5b840b8c360",
+				"dweb:/ipfs/QmZWJ25Yr1sUSAsfJRKvTMDmGkmy63hHhB495CUL1bpNz4"
 			]
 		},
 		"@openzeppelin/contracts/interfaces/draft-IERC6093.sol": {
@@ -976,12 +566,12 @@
 				"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
 			]
 		},
-		"contracts/SVTLottery.sol": {
-			"keccak256": "0x4a832fd5648f046a284967f1c1c51e9ff1ca7b4b412459ea9026ec78a39f61d8",
+		"contracts/SVTLotteryNew.sol": {
+			"keccak256": "0xf7a430c44256f01814cbfaaf27ce94bbb7c4d80b687ffd91e1934231cdee3b64",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://ec488a054f57c13dea087b9324655d404fc2a400089b3e05be15c5f2afe93f96",
-				"dweb:/ipfs/QmSC5s4tFEg1j87XRqwmHCoiSBTXsrqEE5r3AKiUB5kvNL"
+				"bzz-raw://f30e943965d71b15a2684aaf7dbfc212fbf3bfb3719ee343142d87242ca243eb",
+				"dweb:/ipfs/QmZY9r7XcjNfwsXoJ97ggDj9MEKmSQD6LYeLKoVfq8qEAW"
 			]
 		}
 	},

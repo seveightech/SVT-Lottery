@@ -6,13 +6,7 @@
 	"output": {
 		"abi": [
 			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "initialOwner",
-						"type": "address"
-					}
-				],
+				"inputs": [],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
 			},
@@ -943,11 +937,11 @@
 			]
 		},
 		"contracts/SVTLotteryToken.sol": {
-			"keccak256": "0x089fb29fa463ad5b1876977a06a90d482f9a1cb950b30dc5274d5f7177c4ccf6",
+			"keccak256": "0x9f04487e3c7dfb717cc88154da7c3cc0ed87c88bcd0876dc15c12c1ea7a27b91",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e3f8a81d93fc20f621e541e8bf591b12e5168a21127af186b30d843baa0e7469",
-				"dweb:/ipfs/QmSpnRiKP3uQz48vD7ihPUM15oVheQaUiG6veGGeGfTBpc"
+				"bzz-raw://18600aea4d09e3b90d554438773b250c0a6b41fbc4c631f60f6b07d750148dd8",
+				"dweb:/ipfs/QmNbGYjSRtLhdQj8dDLNv7MkTZDqQF61MikymYHuD2XTz5"
 			]
 		}
 	},
